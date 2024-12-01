@@ -26,8 +26,6 @@
 #include "bn_sprite_palette_ptr.h"
 #include "common_info.h"
 #include "common_variable_8x8_sprite_font.h"
-
-#include "bn_sprite_items_paddle.h"
 #include "bn_sprite_items_ball.h"
 #include "bn_sprite_items_ball_new.h"
 #include "bn_sprite_items_paddle_new.h"
@@ -59,12 +57,10 @@ int main()
     // This creates the two paddles.
     // The GBA resolution is 240 x 160, which means that, for a 64x64 paddle,
     // You want their X values to be at about -140 and 140, respectively.
-    bn::sprite_ptr center_paddle = bn::sprite_items::paddle.create_sprite(0, 80);
 
     // We're flipping the right paddle, because the sprite is facing to the right.
     // It's important to save on sprites anywhere we can:
     // Don't forget: cartridges can only be around 16 MB in size!
-    center_paddle.set_rotation_angle(90);
 
     bn::random random;
     bn::vector<bn::fixed_point, 5> velocities;
@@ -128,24 +124,25 @@ int main()
     // That's why the loop is set to never end.
     while (true)
     {
-
-        for(int i = 0; i < 5; ++i)
-        {
-            // Update sprite positions based on velocities
-            bn::fixed_point new_position = sprites[i].position() + velocities[i];
-
-            // Screen boundaries
-            if(new_position.x() < -120 || new_position.x() > 120)
+        if (score < 5) {
+            for(int i = 0; i < 5; ++i)
             {
-                velocities[i].set_x(-velocities[i].x()); // Reverse X direction
-            }
-            if(new_position.y() < -80 || new_position.y() > 80)
-            {
-                velocities[i].set_y(-velocities[i].y()); // Reverse Y direction
-            }
+                // Update sprite positions based on velocities
+                bn::fixed_point new_position = sprites[i].position() + velocities[i];
 
-            // Apply new position
-            sprites[i].set_position(new_position);
+                // Screen boundaries
+                if(new_position.x() < -120 || new_position.x() > 120)
+                {
+                    velocities[i].set_x(-velocities[i].x()); // Reverse X direction
+                }
+                if(new_position.y() < -80 || new_position.y() > 80)
+                {
+                    velocities[i].set_y(-velocities[i].y()); // Reverse Y direction
+                }
+
+                // Apply new position
+                sprites[i].set_position(new_position);
+            }
         }
 
         // If 'up' is being held, and we're not too far up,
@@ -237,9 +234,9 @@ int main()
             bn::sound_items::pong.play();
         }
 
-        const bn::fixed collision_threshold = 1; // Adjust as needed
+        const bn::fixed collision_threshold = 5; // Adjust as needed
 
-        if (bn::abs(t1.x() - target.x()) < collision_threshold && bn::abs(t1.y() - target.y()) < collision_threshold)
+        if (bn::abs(t1.x() - target.x()) < collision_threshold && bn::abs(t1.y() - target.y()) < collision_threshold and bn::keypad::a_pressed())
         {
             BN_LOG(t1.y());
             score++;
@@ -255,7 +252,7 @@ int main()
 
 // Repeat for t2, t3, t4, t5
 
-        if (bn::abs(t2.x() - target.x()) < collision_threshold && bn::abs(t2.y() - target.y()) < collision_threshold)
+        if (bn::abs(t2.x() - target.x()) < collision_threshold && bn::abs(t2.y() - target.y()) < collision_threshold  and bn::keypad::a_pressed())
         {
             BN_LOG(t2.y());
             score++;
@@ -269,7 +266,7 @@ int main()
             bn::sound_items::pong.play();
         }
 
-        if (bn::abs(t3.x() - target.x()) < collision_threshold && bn::abs(t3.y() - target.y()) < collision_threshold)
+        if (bn::abs(t3.x() - target.x()) < collision_threshold && bn::abs(t3.y() - target.y()) < collision_threshold  and bn::keypad::a_pressed())
         {
             BN_LOG(t3.y());
             score++;
@@ -283,7 +280,7 @@ int main()
             bn::sound_items::pong.play();
         }
 
-        if (bn::abs(t4.x() - target.x()) < collision_threshold && bn::abs(t4.y() - target.y()) < collision_threshold)
+        if (bn::abs(t4.x() - target.x()) < collision_threshold && bn::abs(t4.y() - target.y()) < collision_threshold  and bn::keypad::a_pressed())
         {
             BN_LOG(t4.y());
             score++;
@@ -297,7 +294,7 @@ int main()
             bn::sound_items::pong.play();
         }
 
-        if (bn::abs(t5.x() - target.x()) < collision_threshold && bn::abs(t5.y() - target.y()) < collision_threshold)
+        if (bn::abs(t5.x() - target.x()) < collision_threshold && bn::abs(t5.y() - target.y()) < collision_threshold  and bn::keypad::a_pressed())
         {
             BN_LOG(t1.y());
             score++;
@@ -312,6 +309,7 @@ int main()
         }
 
         if (score == 5) {
+            text_sprites.clear();
             bn::string<32> txt_score = "Level complete!";
             text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
         }
