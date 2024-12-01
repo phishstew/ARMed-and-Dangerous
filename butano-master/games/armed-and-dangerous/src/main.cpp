@@ -66,8 +66,8 @@ int main()
     bn::vector<bn::fixed_point, 5> velocities;
     for (int i = 0; i < 5; ++i)
     {
-        bn::fixed dx = bn::fixed::from_data(random.get_int(-512, 512)); // Random X velocity
-        bn::fixed dy = bn::fixed::from_data(random.get_int(-512, 512)); // Random Y velocity
+        bn::fixed dx = bn::fixed::from_data(random.get_int(-1024, 1024)); // Random X velocity
+        bn::fixed dy = bn::fixed::from_data(random.get_int(-1024, 1024)); // Random Y velocity
         velocities.push_back(bn::fixed_point(dx, dy));
     }
     // Let's put the ball in the center of the screen.
