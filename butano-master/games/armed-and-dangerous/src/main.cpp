@@ -64,6 +64,19 @@ int main()
 
     bn::random random;
     bn::vector<bn::fixed_point, 5> velocities;
+    bn::sprite_text_generator text_generator(common::variable_8x8_sprite_font);
+    bn::vector<bn::sprite_ptr, 16> text_sprites;
+    bool game_started = false;
+    text_generator.generate(-6 * 16, -68, "Welcome to the game! (Press A to start)", text_sprites);
+    while(true){
+        if (bn::keypad::a_pressed()) {
+            game_started = true;
+            text_sprites.clear();
+            break;
+        }
+        bn::core::update();
+    }
+
     for (int i = 0; i < 5; ++i)
     {
         bn::fixed dx = bn::fixed::from_data(random.get_int(-1024, 1024)); // Random X velocity
@@ -96,33 +109,19 @@ int main()
     // Increasing these numbers will make the ball move faster.
     int delta_x = 0;
     int delta_y = 0;
-
     // In Butano, as in many libraries, you need to initiatize an instance of a RANDOM object
     // in order to get random numbers. This is what we're doing here.
-
-    // We'll want to set up a couple of Butano objects
-    // in order to put text on the screen.
-    bn::sprite_text_generator text_generator(common::variable_8x8_sprite_font);
-
-    // A 'vector' is a data type that allows us to add or take away elements on a stack,
-    // albeit a stack that can be accessed at any point. It's like an array, but it has
-    // a built-in "size" value so that we can see how many elements are in it.
-    // ..
-    // We need to set up a vector of sprite_ptr to represent individual letters.
-    // We can only have a max of 16 letters in this vector.
-    bn::vector<bn::sprite_ptr, 16> text_sprites;
 
     // Let's go ahead and set up our default text!
     // The first two values represent X and Y.
     // The third is your constant text.
     // The fourth is your sprite_ptr vector.
-    text_generator.generate(-6 * 16, -68, "(Press A to start)", text_sprites);
 
     // This is your main game loop.
     // Remember, the GBA is ONLY running your game -
     // You don't want it to be able to leave!
     // That's why the loop is set to never end.
-    while (true)
+    while (game_started)
     {
         if (score < 5) {
             for(int i = 0; i < 5; ++i)
