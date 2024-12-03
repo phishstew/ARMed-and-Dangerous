@@ -61,17 +61,28 @@ int main()
     // We're flipping the right paddle, because the sprite is facing to the right.
     // It's important to save on sprites anywhere we can:
     // Don't forget: cartridges can only be around 16 MB in size!
-
     bn::random random;
     bn::vector<bn::fixed_point, 5> velocities;
     bn::sprite_text_generator text_generator(common::variable_8x8_sprite_font);
     bn::vector<bn::sprite_ptr, 16> text_sprites;
+    // Here are some variables to get us started.
+    int score = 0;               // We'll add a point when you score, and deduct a point when you fail.
+    int ammo_count = 7;
+    bool successful_shot = false;
+    bool all_shot = false;
     bool game_started = false;
+    bool start_scrn = true;
+    bool win_scrn = false;
     text_generator.generate(-6 * 16, -68, "Welcome to the game! (Press A to start)", text_sprites);
-    while(true){
+    while(start_scrn){
         if (bn::keypad::a_pressed()) {
             game_started = true;
             text_sprites.clear();
+            start_scrn = false;
+            score = 0;               // We'll add a point when you score, and deduct a point when you fail.
+            ammo_count = 7;
+            all_shot = false;
+            successful_shot = false;
             break;
         }
         bn::core::update();
@@ -97,10 +108,6 @@ int main()
     sprites.push_back(t4);
     sprites.push_back(t5);
 
-    // Here are some variables to get us started.
-    int score = 0;               // We'll add a point when you score, and deduct a point when you fail.
-    bool enemy_going_up = false; // This will help us remember which way the enemy paddle should move.
-
     // 'Delta' means change.
     // These two values represent, for each step of the gameloop,
     // which direction the ball should go. Negative means towards top-left, and positive is bottom-right.
@@ -123,6 +130,16 @@ int main()
     // That's why the loop is set to never end.
     while (game_started)
     {
+        if (ammo_count == 0 and score < 5)
+        {
+            t1.set_position(-500, 500);
+            t2.set_position(-500, 500);
+            t3.set_position(-500, 500);
+            t4.set_position(-500, 500);
+            t5.set_position(-500, 500);
+            game_started = false;
+            break;
+        }
         if (score < 5) {
             for(int i = 0; i < 5; ++i)
             {
@@ -183,7 +200,7 @@ int main()
             text_sprites.clear();
 
             // We're setting up a string to represent the new value.
-            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score);
+            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score) + " Ammo: " + bn::to_string<32>(ammo_count);
             text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
 
             // In this function, I'm using a modulus.
@@ -238,9 +255,11 @@ int main()
         if (bn::abs(t1.x() - target.x()) < collision_threshold && bn::abs(t1.y() - target.y()) < collision_threshold and bn::keypad::a_pressed())
         {
             BN_LOG(t1.y());
+            successful_shot = true;
             score++;
+            ammo_count--;
             text_sprites.clear();
-            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score);
+            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score) + " Ammo: " + bn::to_string<32>(ammo_count);
             text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
             delta_y = -delta_y;
             t1.set_position(-500, 500);
@@ -248,15 +267,14 @@ int main()
             // Play sound effect
             bn::sound_items::pong.play();
         }
-
-// Repeat for t2, t3, t4, t5
-
         if (bn::abs(t2.x() - target.x()) < collision_threshold && bn::abs(t2.y() - target.y()) < collision_threshold  and bn::keypad::a_pressed())
         {
             BN_LOG(t2.y());
+            successful_shot = true;
             score++;
+            ammo_count--;
             text_sprites.clear();
-            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score);
+            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score) + " Ammo: " + bn::to_string<32>(ammo_count);
             text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
             delta_y = -delta_y;
             t2.set_position(-500, 500);
@@ -268,9 +286,11 @@ int main()
         if (bn::abs(t3.x() - target.x()) < collision_threshold && bn::abs(t3.y() - target.y()) < collision_threshold  and bn::keypad::a_pressed())
         {
             BN_LOG(t3.y());
+            successful_shot = true;
             score++;
+            ammo_count--;
             text_sprites.clear();
-            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score);
+            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score) + " Ammo: " + bn::to_string<32>(ammo_count);
             text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
             delta_y = -delta_y;
             t3.set_position(-500, 500);
@@ -282,9 +302,11 @@ int main()
         if (bn::abs(t4.x() - target.x()) < collision_threshold && bn::abs(t4.y() - target.y()) < collision_threshold  and bn::keypad::a_pressed())
         {
             BN_LOG(t4.y());
+            successful_shot = true;
             score++;
+            ammo_count--;
             text_sprites.clear();
-            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score);
+            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score) + " Ammo: " + bn::to_string<32>(ammo_count);
             text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
             delta_y = -delta_y;
             t4.set_position(-500, 500);
@@ -296,22 +318,53 @@ int main()
         if (bn::abs(t5.x() - target.x()) < collision_threshold && bn::abs(t5.y() - target.y()) < collision_threshold  and bn::keypad::a_pressed())
         {
             BN_LOG(t1.y());
+            successful_shot = true;
             score++;
+            ammo_count--;
             text_sprites.clear();
-            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score);
+            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score) + " Ammo: " + bn::to_string<32>(ammo_count);
             text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
             delta_y = -delta_y;
             t5.set_position(-500, 500);
-
             // Play sound effect
             bn::sound_items::pong.play();
         }
-
-        if (score == 5) {
+        else if (bn::keypad::a_pressed() and !successful_shot) {
+            ammo_count--;
             text_sprites.clear();
-            bn::string<32> txt_score = "Level complete!";
+            bn::string<32> txt_score = "Score: " + bn::to_string<32>(score) + " Ammo: " + bn::to_string<32>(ammo_count);
             text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
         }
+        if (score == 5 and ammo_count >= 0) {
+            all_shot = true;
+            win_scrn = true;
+            t1.set_position(-500, 500);
+            t2.set_position(-500, 500);
+            t3.set_position(-500, 500);
+            t4.set_position(-500, 500);
+            t5.set_position(-500, 500);
+            game_started = false;
+            break;
+        }
+        
+        // if (score == 5) {
+        //     all_shot = true;
+        //     text_sprites.clear();
+        //     bn::string<32> txt_score = "You won! Press A for main menu";
+        //     text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
+
+        //     // Wait for the player to press A
+        //     while (true) {
+        //         bn::core::update();
+        //         if (bn::keypad::a_pressed()) {
+        //             start_scrn = true;
+        //             break;
+        //         }
+        //     }
+        // }
+
+
+
 
         // One last thing!
         // Let's talk about LOGGING.
@@ -332,8 +385,32 @@ int main()
 
         // Do all the Butano things that we need to have done in the background.
         // If you don't call this, nothing will happen on the screen or through the speakers.
+        successful_shot = false;
         bn::core::update();
     }
+    successful_shot = false;
+    while (!all_shot) {
+        text_sprites.clear();
+        bn::string<32> txt_score = "You lost! Press A for main menu";
+        text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
+        if (bn::keypad::a_pressed()) {
+            start_scrn = true;
+            break;
+        }
+        bn::core::update();
+    }
+    while (all_shot) {
+        text_sprites.clear();
+        bn::string<32> txt_score = "You won! Press <- for main menu";
+        text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
+        if (bn::keypad::left_pressed()) {
+            start_scrn = true;
+            all_shot = false;
+            break;
+        }
+        bn::core::update();
+    }
+    
 }
 
 // And now we're done :)
