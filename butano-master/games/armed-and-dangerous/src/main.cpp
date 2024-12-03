@@ -64,7 +64,7 @@ int main()
     bn::random random;
     bn::vector<bn::fixed_point, 5> velocities;
     bn::sprite_text_generator text_generator(common::variable_8x8_sprite_font);
-    bn::vector<bn::sprite_ptr, 16> text_sprites;
+    bn::vector<bn::sprite_ptr, 64> text_sprites;
     // Here are some variables to get us started.
     int score = 0;               // We'll add a point when you score, and deduct a point when you fail.
     int ammo_count = 7;
@@ -73,7 +73,11 @@ int main()
     bool game_started = false;
     bool start_scrn = true;
     bool win_scrn = false;
-    text_generator.generate(-6 * 16, -68, "Welcome to the game! (Press L to start)", text_sprites);
+    text_generator.generate(-6 * 16, -68, "Welcome (Press L to start/shoot)", text_sprites);
+    text_generator.generate(-6 * 16, -55, "Press A to move left", text_sprites);
+    text_generator.generate(-6 * 16, -40, "Press D to move right", text_sprites);
+    text_generator.generate(-6 * 16, -25, "Press W to move up", text_sprites);
+    text_generator.generate(-6 * 16, -10, "Press S to move down", text_sprites);
     while(start_scrn){
         if (bn::keypad::a_pressed()) {
             game_started = true;
@@ -266,6 +270,13 @@ int main()
 
             // Play sound effect
             bn::sound_items::pong.play();
+        for(int i = 0; i < 30; ++i) // Adjust loop count for a longer or shorter delay
+    {
+        bn::core::update(); // Keep the game loop running to ensure screen updates
+    }
+
+    // Play ping.wav sound after delay
+    bn::sound_items::ping.play();
         }
         if (bn::abs(t2.x() - target.x()) < collision_threshold && bn::abs(t2.y() - target.y()) < collision_threshold  and bn::keypad::a_pressed())
         {
