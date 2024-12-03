@@ -44,7 +44,7 @@ int main()
     // The '1' represents your volume. Its data type is "bn::fixed".
     // This means that you can put 'bn::fixed(0.5)' instead of '1'
     // if you want it to play at half-volume.
-    bn::music_items::amayadori.play(1);
+    bn::music_items::crystalclearloop.play(1);
 
     // Create a background at position 0,0.
     // We can move it around, but we don't want to for now.
