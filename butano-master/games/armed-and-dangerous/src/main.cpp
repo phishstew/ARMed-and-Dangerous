@@ -73,7 +73,7 @@ int main()
     bool game_started = false;
     bool start_scrn = true;
     bool win_scrn = false;
-    text_generator.generate(-6 * 16, -68, "Welcome to the game! (Press A to start)", text_sprites);
+    text_generator.generate(-6 * 16, -68, "Welcome to the game! (Press L to start)", text_sprites);
     while(start_scrn){
         if (bn::keypad::a_pressed()) {
             game_started = true;
@@ -96,11 +96,11 @@ int main()
     }
     // Let's put the ball in the center of the screen.
     bn::vector<bn::sprite_ptr, 5> sprites;
-    bn::sprite_ptr t1 = bn::sprite_items::ball_new.create_sprite(0, 0);
-    bn::sprite_ptr t2 = bn::sprite_items::ball_new.create_sprite(0, 10);
-    bn::sprite_ptr t3 = bn::sprite_items::ball_new.create_sprite(10, 10);
-    bn::sprite_ptr t4 = bn::sprite_items::ball_new.create_sprite(-10, 10);
-    bn::sprite_ptr t5 = bn::sprite_items::ball_new.create_sprite(-10, -10);
+    bn::sprite_ptr t1 = bn::sprite_items::ball.create_sprite(0, 0);
+    bn::sprite_ptr t2 = bn::sprite_items::ball.create_sprite(0, 10);
+    bn::sprite_ptr t3 = bn::sprite_items::ball.create_sprite(10, 10);
+    bn::sprite_ptr t4 = bn::sprite_items::ball.create_sprite(-10, 10);
+    bn::sprite_ptr t5 = bn::sprite_items::ball.create_sprite(-10, -10);
     bn::sprite_ptr target = bn::sprite_items::ball_new.create_sprite(-20, -20);
     sprites.push_back(t1);
     sprites.push_back(t2);
@@ -391,7 +391,7 @@ int main()
     successful_shot = false;
     while (!all_shot) {
         text_sprites.clear();
-        bn::string<32> txt_score = "You lost! Press A for main menu";
+        bn::string<32> txt_score = "You lost! Press L for main menu";
         text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
         if (bn::keypad::a_pressed()) {
             start_scrn = true;
@@ -401,7 +401,7 @@ int main()
     }
     while (all_shot) {
         text_sprites.clear();
-        bn::string<32> txt_score = "You won! Press <- for main menu";
+        bn::string<32> txt_score = "You won! Press A for main menu";
         text_generator.generate(-6 * 16, -68, txt_score, text_sprites);
         if (bn::keypad::left_pressed()) {
             start_scrn = true;
